@@ -10,43 +10,63 @@ updater = Updater(key.bot_token)
 dispatcher = updater.dispatcher
 
 
-def start_command(update: Update, context: CallbackContext):
-    # buttons = [[KeyboardButton("hi")], [KeyboardButton("by")]]
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="Use any coin/ token symbol to get live price, for example send btc$ to have "
-                                  "Bitcoin price per USD or send btceth to have Bitcoin price per Ethereum, for more options /help")
-
-
-dispatcher.add_handler(CommandHandler("start", start_command))
-
-
-def btc_price_command(update: Update, context: CallbackContext):
-    # buttons = [[KeyboardButton("hi")], [KeyboardButton("by")]]
-    context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="btc$")
-
-
-dispatcher.add_handler(CommandHandler("btc", btc_price_command))
-
-
-#Main Code:
 def symbol_to_id(symbol):
-    cleaned_symbol = str(symbol).strip().lower()
-    symbol_url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
-    id_request = json.loads(requests.get(url=symbol_url).text)
-    find = {y["symbol"]: x for x, y in list(enumerate(id_request))}
-    location = find[cleaned_symbol]
+    try:  # based on API some keys are lower and some are upper case so handle this with try and except
+        cleaned_symbol = str(symbol).strip().lower()
+        symbol_url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
+        id_request = json.loads(requests.get(url=symbol_url).text)
+        find = {y["symbol"]: x for x, y in list(enumerate(id_request))}
+        location = find[cleaned_symbol]
 
-    coin_id = id_request[location]["id"]
+        coin_id = id_request[location]["id"]
 
-    return coin_id
+        return coin_id
+    except:
+        cleaned_symbol = str(symbol).strip().upper()
+        symbol_url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
+        id_request = json.loads(requests.get(url=symbol_url).text)
+        find = {y["symbol"]: x for x, y in list(enumerate(id_request))}
+        location = find[cleaned_symbol]
+
+        coin_id = id_request[location]["id"]
+
+        return coin_id
+
+
+def symbol_to_name(symbol):
+    try:
+        cleaned_symbol = str(symbol).strip().lower()
+        symbol_url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
+        id_request = json.loads(requests.get(url=symbol_url).text)
+        find = {y["symbol"]: x for x, y in list(enumerate(id_request))}
+        location = find[cleaned_symbol]
+
+        coin_name = id_request[location]["name"]
+
+        return coin_name
+    except:
+        cleaned_symbol = str(symbol).strip().upper()
+        symbol_url = "https://api.coingecko.com/api/v3/coins/list?include_platform=true"
+        id_request = json.loads(requests.get(url=symbol_url).text)
+        find = {y["symbol"]: x for x, y in list(enumerate(id_request))}
+        location = find[cleaned_symbol]
+
+        coin_name = id_request[location]["name"]
+
+        return coin_name
 
 
 def rounded_thousands_seperator_usd(dollars):
-    if str(dollars).lower().__contains__("e"):
-        return "$" + f"{dollars :.12f}"
-    else:
-        return "$" + f"{round(dollars, 5):,}"
+    try:
+        if str(dollars).lower().__contains__("e"):
+            return "$" + f"{dollars :.12f}"
+        else:
+            return "$" + f"{round(dollars, 5):,}"
+    except:
+        if str(dollars).upper().__contains__("e"):
+            return "$" + f"{dollars :.12f}"
+        else:
+            return "$" + f"{round(dollars, 5):,}"
 
 
 def rounded_thousands_seperator_percent(percent):
@@ -54,7 +74,7 @@ def rounded_thousands_seperator_percent(percent):
 
 
 def get_price(message):
-    symbol = str(update.message.text).strip().replace("$", "")
+    symbol = str(message).strip().replace("$", "")
     if 2 < len(symbol) <= 4:
         versus = "usd"
         coin_id = symbol_to_id(symbol)
@@ -70,19 +90,41 @@ def get_price(message):
         usd_24h_change = rounded_thousands_seperator_percent(price_output["usd_24h_change"])
         print(usd_24h_change)
 
-#End of Main Code
+        return symbol.title() + " - " + symbol_to_name(
+            symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + usd_24h_change
 
 
+def start_command(update: Update, context: CallbackContext):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="Use any coin/ token symbol to get live price, for example send btc$ to have "
+                                  "Bitcoin price per USD or send btceth to have Bitcoin price per Ethereum, for more options /help")
 
 
-def message_handler(update: Update, context: CallbackContext):
-    symbol = update.message.text
+def help_command(update: Update, context: CallbackContext):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="It is help")
 
 
+def btc_price_command(update: Update, context: CallbackContext):
+    context.bot.send_message(chat_id=update.effective_chat.id,
+                             text="btc$")
 
-    context.bot.send_message(chat_id=update.effective_chat.id, text=get_price(update.message.text))
+
+def response(input_text):
+    user_message = str(input_text).lower().strip()
+    if user_message.__contains__("$"):
+        print(user_message)
+        return get_price(user_message)
 
 
-dispatcher.add_handler(MessageHandler(message_handler))
+def handle_message(update: Update, context: CallbackContext):
+    text = str(update.message.text).lower()
+    update.message.reply_text(str(response(text)))
+
+
+dispatcher.add_handler(CommandHandler("start", start_command))
+dispatcher.add_handler(CommandHandler("help", help_command))
+dispatcher.add_handler(CommandHandler("btc", btc_price_command))
+dispatcher.add_handler(MessageHandler(Filters.text, handle_message))
 
 updater.start_polling()
