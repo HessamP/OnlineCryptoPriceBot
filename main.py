@@ -89,9 +89,10 @@ def get_price(message):
     usd_24h_change = rounded_thousands_seperator_percent(price_output["usd_24h_change"])
     print(usd_24h_change)
 
-    return symbol.title() + " - " + symbol_to_name(
+    markup=symbol.title() + " - " + symbol_to_name(
         symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + str(usd_24h_change) + "\n" + "Market Cap: " + str(
         usd_market_cap2) + "\n24h Volume: " + str(usd_24h_vol)
+    return markup
 
 
 # getting token price versus other token (not usd)
