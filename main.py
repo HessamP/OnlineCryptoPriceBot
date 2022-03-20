@@ -114,9 +114,9 @@ def get_price(message):
 #
 #         versus_24h_change = rounded_thousands_seperator_percent(price_output[f"{symbol[-3:]}_24h_change"])
 #         print(versus_24h_change)
-#
-#         return symbol.title() + " - " + symbol_to_name(
-#             symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + versus_24h_change
+#         markup2=symbol.title() + " - " + symbol_to_name(
+#               symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + versus_24h_change
+#         return markup2
 #     else:
 #         return "Not valid versus coin, use /help"
 
