@@ -89,36 +89,10 @@ def get_price(message):
     usd_24h_change = rounded_thousands_seperator_percent(price_output["usd_24h_change"])
     print(usd_24h_change)
 
-    markup=symbol.title() + " - " + symbol_to_name(
+    markup = symbol.title() + " - " + symbol_to_name(
         symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + str(usd_24h_change) + "\n" + "Market Cap: " + str(
         usd_market_cap2) + "\n24h Volume: " + str(usd_24h_vol)
     return markup
-
-
-# getting token price versus other token (not usd)
-
-# def get_non_usd_price(message):
-#     symbol = str(message).strip().replace("$", "")
-#     if symbol[-3:] in json.loads(requests.get("https://api.coingecko.com/api/v3/simple/supported_vs_currencies").text):
-#         coin_id = symbol_to_id(symbol[-len(symbol):-3])
-#         versus=symbol[len(symbol)-3:]
-#         print(versus)
-#         coingecko_price_url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies={versus}&include_market_cap" \
-#                               "=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true "
-#
-#         price_request = json.loads(requests.get(url=coingecko_price_url).text)
-#         price_output = price_request[coin_id]
-#         price = rounded_thousands_seperator_usd(price_output[symbol[-3:]])
-#         versus_market_cap2 = rounded_thousands_seperator_usd(price_output[f"{symbol[-3:]}_market_cap"])
-#         print(price)
-#
-#         versus_24h_change = rounded_thousands_seperator_percent(price_output[f"{symbol[-3:]}_24h_change"])
-#         print(versus_24h_change)
-#         markup2=symbol.title() + " - " + symbol_to_name(
-#               symbol) + "\n" + "Price: " + price + "\n" + "24h Change: " + versus_24h_change
-#         return markup2
-#     else:
-#         return "Not valid versus coin, use /help"
 
 
 def start_command(update: Update, context: CallbackContext):
