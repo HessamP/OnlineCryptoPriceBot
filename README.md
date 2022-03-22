@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/HessamP/OnlineCryptoPriceBot/master/screenshot.JPG" alt="bot-screenshot">
 after clone:
 ```shell
-<br>pip install -r requirements.txt
+pip install -r requirements.txt
 ```shell
  to have all library installed
 <br>make key.py
