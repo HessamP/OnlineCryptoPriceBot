@@ -1,12 +1,14 @@
 # OnlineCryptoPriceBot
 
 <img src="https://raw.githubusercontent.com/HessamP/OnlineCryptoPriceBot/master/screenshot.JPG" alt="bot-screenshot">
-after clone:
-.. code:: bash
- pip install -r requirements.txt
+after clone to have all libraries run below command:<br>
 
- to have all library installed
+```
+pip install -r requirements.txt
+ 
+```
+then:
 <br>make key.py
 <br>put your telegram bot token in bot_token variable
-<br>run program
+<br>finally run main.py
 
